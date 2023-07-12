@@ -1,3 +1,5 @@
+// 코드를 깔끔하게 짤 수 있도록 도와주는 라이브러리 설정
+// TS작성 가이드라인도 알려줌
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
