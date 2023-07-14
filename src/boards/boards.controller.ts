@@ -1,6 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { Board } from './boards.model';
+import { Board, BoardsStatus } from './boards.model';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { isNotEmpty } from 'class-validator';
+import { BoardStatusValidationPipe } from './board-status-validation.pipe';
 
 @Controller('boards')
 export class BoardsController {
@@ -12,11 +15,34 @@ export class BoardsController {
         return this.boardsSerivce.getAllBoards();
     }
 
+    @Get('/:id')
+    getBoardById(
+        @Param('id') boardId: string
+    ): Board {
+        console.log(boardId);
+        return this.boardsSerivce.getBoardById(boardId);
+    }
+
     @Post()
+    @UsePipes(ValidationPipe)
     createBoard(
-        @Body('title') title: string,
-        @Body('description') description: string
+        @Body() CreateBoardDto: CreateBoardDto
     ) {
-        this.boardsSerivce.createBoard(title, description);
-    } 
+        this.boardsSerivce.createBoard(CreateBoardDto);
+    }
+
+    @Put('/:id/status')
+    updateBoard(
+        @Body('status', BoardStatusValidationPipe) status: BoardsStatus,
+        @Param('id') boardId: string
+    ) {
+        this.boardsSerivce.updateBoardStatus(boardId, status);
+    }
+
+    @Delete('/:id')
+    deleteBoardById(
+        @Param('id') id: string
+    ) {
+        this.boardsSerivce.deleteBoardById(id);
+    }
 }
